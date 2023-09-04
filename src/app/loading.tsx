@@ -1,7 +1,11 @@
-import React from 'react'
-
-export default function Loading() {
+const Loading = () => {
   return (
-    <div>loading</div>
+    <section className='py-24'>
+      <div className='container flex items-center justify-center'>
+        <span className="loading loading-spinner loading-lg"></span>
+      </div>
+    </section>
   )
 }
+
+export default Loading

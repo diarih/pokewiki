@@ -1,7 +1,62 @@
+'use client'
+
 import React from 'react'
-import Image from 'next/image'
+import { useInfiniteQuery } from 'react-query'
+import Loading from '@/app/loading'
+import { useInView } from 'react-intersection-observer'
+import PokemonCard from '../cards/PokemonCard'
+
+async function getPokemons(pageparam: number) {
+    const res = await fetch(`https://pokeapi.co/api/v2/pokemon?limit=12&offset=${pageparam}`)
+    const pokemons: Pokemons = await res.json();
+    const data = await getPokemon(pokemons.results)
+    return data;
+}
+
+async function getPokemon(res: Array<PokemonsResult>): Promise<Array<Pokemon>> {
+    const detail = await Promise.all(res.map(async (item) => {
+        const res = await fetch(item.url)
+        const pokemons = await res.json();
+        return pokemons
+    }))
+    return detail
+
+}
 
 export default function List() {
+
+    const { ref, inView } = useInView()
+
+    const {
+        status,
+        data,
+        isFetchingNextPage,
+        fetchNextPage,
+        hasNextPage,
+    } = useInfiniteQuery(
+        'projects',
+        ({ pageParam = 0 }) => getPokemons(pageParam),
+        {
+            getNextPageParam: (lastPage) => {
+
+                if (lastPage && lastPage.length > 0) {
+                    const lastPokemonId = lastPage[lastPage.length - 1].id;
+                    const nextOffset = lastPokemonId;
+
+                    return nextOffset;
+                }
+                return undefined;
+            },
+        }
+    )
+
+    React.useEffect(() => {
+        if (inView) {
+            fetchNextPage()
+        }
+    }, [inView])
+
+
     return (
         <section className='flex md:px-8 justify-center flex-col items-center gap-4'>
             <div className='w-full flex items-center justify-between'>
@@ -16,31 +71,35 @@ export default function List() {
                     </select>
                 </div>
             </div>
-            <div className='grid grid-cols-12 gap-5 w-full'>
-                {
-                    [...Array(12)].map((e, i: number) => {
-                        return (
-                            <a href='https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/dream-world/1.svg' className='md:col-span-3 col-span-6 flex flex-col gap-3 rounded bg-base-200'>
-                                <div className='bg-base-300 rounded w-full p-4 flex justify-center items-center'>
-                                    <Image alt="pokemon" width={200} height={200} src={"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/dream-world/1.svg"} />
-                                </div>
-                                <div className='p-4'>
-                                    <div className='text-xs font-semibold mb-3'>
-                                        #0001
-                                    </div>
-                                    <div>
-                                        <div className='text-xl font-semibold mb-2'>Ditto</div>
-                                        <div className='flex items-center gap-2'>
-                                            <div className="badge badge-info font-semibold text-xs">Water</div>
-                                            <div className="badge badge-error font-semibold text-xs">Fire</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </a>
-                        )
-                    })
-                }
-            </div>
+
+            {
+                status === 'loading' ?
+                    <Loading /> : (
+                        <div className='grid grid-cols-12 gap-5 w-full'>
+                            {data?.pages.map((page, i: number) => (
+                                <React.Fragment key={i}>
+                                    {page?.map((project) => (
+                                        <PokemonCard data={project} key={project.id} />
+                                    ))}
+                                </React.Fragment>
+                            ))}
+                            <div>
+                                <button
+                                    ref={ref}
+                                    onClick={() => fetchNextPage()}
+                                    disabled={!hasNextPage || isFetchingNextPage}
+                                >
+                                    {isFetchingNextPage
+                                        ? 'Loading more...'
+                                        : hasNextPage
+                                            ? 'Load Newer'
+                                            : 'Nothing more to load'}
+                                </button>
+                            </div>
+                        </div>
+                    )
+
+            }
         </section>
     )
 }
