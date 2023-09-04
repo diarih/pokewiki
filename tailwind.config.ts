@@ -1,6 +1,16 @@
 import type { Config } from 'tailwindcss'
 
 const config: Config = {
+  daisyui: {
+    themes: ["dark"], 
+    darkTheme: "dark", 
+    base: true,
+    styled: true,
+    utils: true,
+    rtl: false, 
+    prefix: "",
+    logs: true,
+  },
   content: [
     './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
     './src/components/**/*.{js,ts,jsx,tsx,mdx}',
@@ -15,6 +25,6 @@ const config: Config = {
       },
     },
   },
-  plugins: [],
+  plugins: [require("daisyui")],
 }
 export default config
