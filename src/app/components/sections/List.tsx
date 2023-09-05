@@ -1,31 +1,63 @@
 'use client'
 
-import React from 'react'
-import { useInfiniteQuery } from 'react-query'
+import React, { useState } from 'react'
+import { useInfiniteQuery, useQuery } from 'react-query'
 import Loading from '@/app/loading'
 import { useInView } from 'react-intersection-observer'
 import PokemonCard from '../cards/PokemonCard'
 
-async function getPokemons(pageparam: number) {
-    const res = await fetch(`https://pokeapi.co/api/v2/pokemon?limit=12&offset=${pageparam}`)
-    const pokemons: Pokemons = await res.json();
-    const data = await getPokemon(pokemons.results)
-    return data;
+
+async function getPokemons(pageparam: number = 0, queryKey: [string]) {
+    const type = queryKey[0]
+
+    if (type === '' || type === 'all') {
+        const res = await fetch(`https://pokeapi.co/api/v2/pokemon?limit=12&offset=${pageparam}`)
+        const pokemons: Pokemons = await res.json();
+        const data = await getPokemon(pokemons.results)
+        return data;
+    }
+
+    const res = await fetch(`https://pokeapi.co/api/v2/type/${type}`)
+    const pokeType: any = await res.json();
+    const data = await getPokemon(pokeType.pokemon, type)
+    return data
+
 }
 
-async function getPokemon(res: Array<PokemonsResult>): Promise<Array<Pokemon>> {
-    const detail = await Promise.all(res.map(async (item) => {
-        const res = await fetch(item.url)
-        const pokemons = await res.json();
-        return pokemons
-    }))
-    return detail
+async function getPokemon(
+    res: Array<PokemonResultType | PokemonsResult>,
+    type?: string
+): Promise<Array<Pokemon>> {
+    const filteredRes = type
+        ? res.filter((item) => 'pokemon' in item)
+        : res;
 
+    const detail = await Promise.all(filteredRes.map(async (item) => {
+        const itemUrl = 'pokemon' in item ? item.pokemon.url : item.url;
+        const res = await fetch(itemUrl);
+        const pokemons = await res.json();
+        return pokemons;
+    }));
+
+    return detail;
+}
+
+async function getTypePokemon() {
+    const res = await fetch(`https://pokeapi.co/api/v2/type`)
+    const data: Pokemons = await res.json();
+    return data;
 }
 
 export default function List() {
 
     const { ref, inView } = useInView()
+
+    const [type, setType] = useState("all")
+
+    const { data: typeData } = useQuery(
+        'type',
+        getTypePokemon
+    )
 
     const {
         status,
@@ -34,12 +66,12 @@ export default function List() {
         fetchNextPage,
         hasNextPage,
     } = useInfiniteQuery(
-        'projects',
-        ({ pageParam = 0 }) => getPokemons(pageParam),
+        type,
+        ({ pageParam = 0, queryKey }) => getPokemons(pageParam, queryKey),
         {
             getNextPageParam: (lastPage) => {
 
-                if (lastPage && lastPage.length > 0) {
+                if (lastPage && lastPage.length > 0 && type === 'all') {
                     const lastPokemonId = lastPage[lastPage.length - 1].id;
                     const nextOffset = lastPokemonId;
 
@@ -49,6 +81,10 @@ export default function List() {
             },
         }
     )
+
+    const onChangeType = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        setType(e.target.value)
+    }
 
     React.useEffect(() => {
         if (inView) {
@@ -63,11 +99,13 @@ export default function List() {
                 <button className="btn btn-accent">My Favorite</button>
                 <div className='flex items-center gap-3'>
                     <div className='whitespace-nowrap hidden md:block'>Monster Type</div>
-                    <select className="select select-bordered w-full max-w-xs">
-                        <option disabled selected>Select Type</option>
-                        <option>Water</option>
-                        <option>Fire</option>
-                        <option>Grass</option>
+                    <select onChange={onChangeType} defaultValue={type} className="select select-bordered w-full max-w-xs">
+                        <option value={'all'}>All Type</option>
+                        {
+                            typeData?.results.map((e, i) => {
+                                return <option key={i} value={e.name} className='capitalize'>{e.name}</option>
+                            })
+                        }
                     </select>
                 </div>
             </div>
@@ -75,30 +113,31 @@ export default function List() {
             {
                 status === 'loading' ?
                     <Loading /> : (
-                        <div className='grid grid-cols-12 gap-5 w-full'>
-                            {data?.pages.map((page, i: number) => (
-                                <React.Fragment key={i}>
-                                    {page?.map((project) => (
-                                        <PokemonCard data={project} key={project.id} />
-                                    ))}
-                                </React.Fragment>
-                            ))}
-                            <div>
-                                <button
-                                    ref={ref}
-                                    onClick={() => fetchNextPage()}
-                                    disabled={!hasNextPage || isFetchingNextPage}
-                                >
-                                    {isFetchingNextPage
-                                        ? 'Loading more...'
-                                        : hasNextPage
-                                            ? 'Load Newer'
-                                            : 'Nothing more to load'}
-                                </button>
+                        <>
+                            <div className='grid grid-cols-12 gap-5 w-full'>
+                                {data?.pages.map((page, i: number) => (
+                                    <React.Fragment key={i}>
+                                        {page?.map((project) => (
+                                            <PokemonCard data={project} key={project.id} />
+                                        ))}
+                                    </React.Fragment>
+                                ))}
                             </div>
-                        </div>
+                            <div>
+                                    <button
+                                        ref={ref}
+                                        onClick={() => fetchNextPage()}
+                                        disabled={!hasNextPage || isFetchingNextPage}
+                                    >
+                                        {isFetchingNextPage
+                                            ? 'Loading more...'
+                                            : hasNextPage
+                                                ? 'Load Newer'
+                                                : 'Nothing more to load'}
+                                    </button>
+                                </div>
+                        </>
                     )
-
             }
         </section>
     )
