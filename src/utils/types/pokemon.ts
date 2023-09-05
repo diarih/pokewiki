@@ -69,8 +69,12 @@ interface Pokemon {
 }
 
 interface PokemonsResult {
-    id: number,
+    name: number,
     url: string
+}
+
+interface PokemonResultType {
+    pokemon: PokemonsResult
 }
 
 interface Pokemons {

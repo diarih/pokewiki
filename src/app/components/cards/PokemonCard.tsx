@@ -3,11 +3,14 @@ import React from 'react'
 
 export default function PokemonCard({ data }: { data: Pokemon }) {
 
+    const image = data.sprites.other["official-artwork"].front_default
+    const imageAlt = data.sprites.other.dream_world.front_default
+
     const cardBody = (
         <a href={`/${data.id}`}>
             <div style={{ height: 200 }} className='bg-base-300 rounded w-full p-4 flex justify-center items-center'>
-                <div className='relative' style={{height: 150, width: 150}}>
-                    <Image alt="pokemon" fill  src={data.sprites.other.dream_world.front_default} />
+                <div className='relative' style={{ height: 150, width: 150 }}>
+                    <Image sizes='150' alt="pokemon" fill src={image || imageAlt || '/images/pokeball.png'} />
                 </div>
             </div>
             <div className='p-4'>
