@@ -1,6 +1,7 @@
 import { FavContext } from '@/context/FavContext'
 import Image from 'next/image'
 import React, { ChangeEvent, useContext } from 'react'
+import LabelTypePokemon from '../labels/labelTypePokemon'
 
 interface PokemonCardType {
     data: Pokemon
@@ -32,8 +33,11 @@ export default function PokemonCard({ data, onChange }: PokemonCardType) {
                     <div className='flex items-center gap-2'>
                         {
                             data.types.map((type, c: number) => {
+                                const typePokemon = type.type.name
                                 return (
-                                    <div key={c} className="badge badge-info font-semibold text-xs capitalize">{type.type.name}</div>
+                                    <LabelTypePokemon key={c} typePokemon={typePokemon}>
+                                        {typePokemon}
+                                    </LabelTypePokemon>
                                 )
                             })
                         }
