@@ -60,7 +60,7 @@ export default async function asyPage({ params }: { params: { slug: string } }) 
                         <div className="text-xl font-black capitalize">
                             {
                                 data.types.map((e, i: number) => {
-                                    return <span>{e.type.name} </span>
+                                    return <span key={i}>{e.type.name} </span>
                                 })
                             }
                         </div>
@@ -87,7 +87,7 @@ export default async function asyPage({ params }: { params: { slug: string } }) 
 
                     {data.stats.map((e, i: number) => {
                         return (
-                            <div className="stat place-items-center">
+                            <div key={i} className="stat place-items-center">
                                 <div className="stat-title capitalize">{e.stat.name}</div>
                                 <div className="stat-value">{e.base_stat}</div>
                                 <div className="stat-desc">Pokemon</div>
