@@ -1,12 +1,15 @@
 'use client'
 
-import React, { useContext, useState } from 'react'
+import React, { ChangeEvent, useContext, useState } from 'react'
 import { useInfiniteQuery, useQuery } from 'react-query'
 import Loading from '@/app/loading'
 import { useInView } from 'react-intersection-observer'
 import PokemonCard from '../cards/PokemonCard'
 import { FavContext } from '@/context/FavContext'
 
+interface PokeType {
+    pokemon: []
+}
 
 async function getPokemons(pageparam: number = 0, queryKey: [string]) {
     const type = queryKey[0]
@@ -19,7 +22,7 @@ async function getPokemons(pageparam: number = 0, queryKey: [string]) {
     }
 
     const res = await fetch(`https://pokeapi.co/api/v2/type/${type}`)
-    const pokeType: any = await res.json();
+    const pokeType: PokeType = await res.json();
     const data = await getPokemon(pokeType.pokemon, type)
     return data
 
@@ -89,7 +92,7 @@ export default function List() {
         setType(e.target.value)
     }
 
-    const onChangeFav = (e: any) => {
+    const onChangeFav = (e: ChangeEvent<HTMLInputElement>) => {
         const updatedData = JSON.parse(e.target.value)
         addFav(updatedData)
     }
@@ -104,7 +107,9 @@ export default function List() {
     return (
         <section className='flex md:px-8 justify-center flex-col items-center gap-4'>
             <div className='w-full flex items-center justify-between'>
-                <button className="btn btn-accent">My Favorite</button>
+                <a href="/favorite">
+                    <button className="btn btn-primary capitalize">My Pokemon</button>
+                </a>
                 <div className='flex items-center gap-3'>
                     <div className='whitespace-nowrap hidden md:block'>Monster Type</div>
                     <select onChange={onChangeType} defaultValue={type} className="select select-bordered w-full max-w-xs">
@@ -132,18 +137,18 @@ export default function List() {
                                 ))}
                             </div>
                             <div>
-                                    <button
-                                        ref={ref}
-                                        onClick={() => fetchNextPage()}
-                                        disabled={!hasNextPage || isFetchingNextPage}
-                                    >
-                                        {isFetchingNextPage
-                                            ? 'Loading more...'
-                                            : hasNextPage
-                                                ? 'Load Newer'
-                                                : 'Nothing more to load'}
-                                    </button>
-                                </div>
+                                <button
+                                    ref={ref}
+                                    onClick={() => fetchNextPage()}
+                                    disabled={!hasNextPage || isFetchingNextPage}
+                                >
+                                    {isFetchingNextPage
+                                        ? 'Loading more...'
+                                        : hasNextPage
+                                            ? 'Load Newer'
+                                            : 'Nothing more to load'}
+                                </button>
+                            </div>
                         </>
                     )
             }

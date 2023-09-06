@@ -3,18 +3,22 @@ import Image from "next/image";
 import { useContext } from "react";
 import Favorite from "./components/favorite";
 
+interface About {
+    about: string
+}
+
 async function getAbout(url: string) {
     const res = await fetch(url)
     const data = await res.json();
     return data;
 }
 
-async function getPokemon(slug: string | number) {
+async function getPokemon(slug: string | number): Promise<Pokemon & About> {
     const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${slug}`)
     const pokemon = await res.json();
     const species = await getAbout(pokemon.species.url)
 
-    const about = species.flavor_text_entries[0].flavor_text
+    const about: string = species.flavor_text_entries[0].flavor_text
 
     return {
         ...pokemon,
@@ -31,7 +35,7 @@ export default async function asyPage({ params }: { params: { slug: string } }) 
     const imageAlt = data.sprites.other.dream_world.front_default
 
     return (
-        <main className="max-w-screen-md bg-neutral py-12 mx-auto flex flex-col gap-8 min-h-screen">
+        <>
             <section className="flex flex-col gap-2 justify-center items-center">
                 <div>#{data.id}</div>
                 <div className="capitalize font-semibold text-4xl">{data.name}</div>
@@ -55,7 +59,7 @@ export default async function asyPage({ params }: { params: { slug: string } }) 
                     <div className="flex justify-center h-20 flex-grow card bg-base-300 rounded-box place-items-center">
                         <div className="text-xl font-black capitalize">
                             {
-                                data.types.map((e: any, i: number) => {
+                                data.types.map((e, i: number) => {
                                     return <span>{e.type.name} </span>
                                 })
                             }
@@ -81,7 +85,7 @@ export default async function asyPage({ params }: { params: { slug: string } }) 
                 </div>
                 <div className="stats shadow">
 
-                    {data.stats.map((e: any, i: number) => {
+                    {data.stats.map((e, i: number) => {
                         return (
                             <div className="stat place-items-center">
                                 <div className="stat-title capitalize">{e.stat.name}</div>
@@ -93,6 +97,6 @@ export default async function asyPage({ params }: { params: { slug: string } }) 
 
                 </div>
             </section>
-        </main>
+        </>
     )
 }

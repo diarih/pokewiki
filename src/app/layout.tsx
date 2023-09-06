@@ -3,6 +3,7 @@ import './globals.css'
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import { FavProvider } from '@/context/FavContext'
+import Navbar from './components/navbar/navbar'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -21,6 +22,7 @@ export default function RootLayout({
       <body className={`${inter.className}`}>
         <FavProvider>
           <Providers>
+            <Navbar />
             {children}
           </Providers>
         </FavProvider>

@@ -1,8 +1,13 @@
 import { FavContext } from '@/context/FavContext'
 import Image from 'next/image'
-import React, { useContext } from 'react'
+import React, { ChangeEvent, useContext } from 'react'
 
-export default function PokemonCard({ data, onChange }: { data: Pokemon, onChange: any }) {
+interface PokemonCardType {
+    data: Pokemon
+    onChange: (e: ChangeEvent<HTMLInputElement>) => void
+}
+
+export default function PokemonCard({ data, onChange }: PokemonCardType) {
 
     const { favPokemon } = useContext(FavContext)
 

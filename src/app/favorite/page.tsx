@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useContext } from 'react'
+import React, { ChangeEvent, useContext } from 'react'
 import PokemonCard from '../components/cards/PokemonCard';
 import { FavContext } from '@/context/FavContext';
 
@@ -8,7 +8,7 @@ export default function Favorite() {
 
     const { favPokemon, deleteFav } = useContext(FavContext)
 
-    const onChangeFav = (e: any) => {
+    const onChangeFav = (e: ChangeEvent<HTMLInputElement>) => {
         const updatedData = JSON.parse(e.target.value)
         deleteFav(updatedData.id)
     }
