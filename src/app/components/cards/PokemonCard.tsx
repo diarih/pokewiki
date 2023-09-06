@@ -1,10 +1,15 @@
+import { FavContext } from '@/context/FavContext'
 import Image from 'next/image'
-import React from 'react'
+import React, { useContext } from 'react'
 
-export default function PokemonCard({ data }: { data: Pokemon }) {
+export default function PokemonCard({ data, onChange }: { data: Pokemon, onChange: any }) {
+
+    const { favPokemon } = useContext(FavContext)
 
     const image = data.sprites.other["official-artwork"].front_default
     const imageAlt = data.sprites.other.dream_world.front_default
+
+    const checked = favPokemon.some((fav) => fav.id === data.id)
 
     const cardBody = (
         <a href={`/${data.id}`}>
@@ -36,6 +41,7 @@ export default function PokemonCard({ data }: { data: Pokemon }) {
     return (
         <article className='md:col-span-3 col-span-6 flex flex-col gap-3 rounded bg-base-200'>
             {cardBody}
+            <input checked={checked} value={JSON.stringify(data)} onChange={onChange} type="checkbox" aria-label={`${checked ? 'Catched' : 'Catch'}`} className="btn rounded-none capitalize" />
         </article>
     )
 }

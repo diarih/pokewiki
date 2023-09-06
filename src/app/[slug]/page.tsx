@@ -1,4 +1,7 @@
+import { FavContext } from "@/context/FavContext";
 import Image from "next/image";
+import { useContext } from "react";
+import Favorite from "./components/favorite";
 
 async function getAbout(url: string) {
     const res = await fetch(url)
@@ -41,9 +44,13 @@ export default async function asyPage({ params }: { params: { slug: string } }) 
                 </div>
             </section>
             <section className="p-4 flex flex-col gap-8">
-                <p className="rounded-xl bg-neutral-focus py-3 px-6">
-                    {data.about}
-                </p>
+                <div className="flex flex-row gap-2">
+                    <p className="w-full rounded-xl bg-neutral-focus py-3 px-6">
+                        {data.about}
+                    </p>
+                    <Favorite data={data} />
+                </div>
+
                 <div className="flex w-full">
                     <div className="flex justify-center h-20 flex-grow card bg-base-300 rounded-box place-items-center">
                         <div className="text-xl font-black capitalize">
@@ -59,14 +66,14 @@ export default async function asyPage({ params }: { params: { slug: string } }) 
                     </div>
                     <div className="divider divider-horizontal"></div>
                     <div className="flex justify-center h-20 flex-grow card bg-base-300 rounded-box place-items-center">
-                        <div className="text-xl font-black">{Number(data.weight)/10}kg</div>
+                        <div className="text-xl font-black">{Number(data.weight) / 10}kg</div>
                         <div className="text-xs">
                             Weight
                         </div>
                     </div>
                     <div className="divider divider-horizontal"></div>
                     <div className="flex justify-center h-20 flex-grow card bg-base-300 rounded-box place-items-center">
-                        <div className="text-xl font-black">{Number(data.height)/10}m</div>
+                        <div className="text-xl font-black">{Number(data.height) / 10}m</div>
                         <div className="text-xs font-semibold">
                             Height
                         </div>
