@@ -2,6 +2,7 @@ import Providers from '@/utils/lib/Providers'
 import './globals.css'
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
+import { FavProvider } from '@/context/FavContext'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -18,9 +19,11 @@ export default function RootLayout({
   return (
     <html lang="en" data-theme="dark">
       <body className={`${inter.className}`}>
-        <Providers>
-          {children}
-        </Providers>
+        <FavProvider>
+          <Providers>
+            {children}
+          </Providers>
+        </FavProvider>
       </body>
     </html>
   )

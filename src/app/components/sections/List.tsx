@@ -1,10 +1,11 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { useInfiniteQuery, useQuery } from 'react-query'
 import Loading from '@/app/loading'
 import { useInView } from 'react-intersection-observer'
 import PokemonCard from '../cards/PokemonCard'
+import { FavContext } from '@/context/FavContext'
 
 
 async function getPokemons(pageparam: number = 0, queryKey: [string]) {
@@ -54,6 +55,8 @@ export default function List() {
 
     const [type, setType] = useState("all")
 
+    const { favPokemon, addFav } = useContext(FavContext)
+
     const { data: typeData } = useQuery(
         'type',
         getTypePokemon
@@ -84,6 +87,11 @@ export default function List() {
 
     const onChangeType = (e: React.ChangeEvent<HTMLSelectElement>) => {
         setType(e.target.value)
+    }
+
+    const onChangeFav = (e: any) => {
+        const updatedData = JSON.parse(e.target.value)
+        addFav(updatedData)
     }
 
     React.useEffect(() => {
@@ -118,7 +126,7 @@ export default function List() {
                                 {data?.pages.map((page, i: number) => (
                                     <React.Fragment key={i}>
                                         {page?.map((project) => (
-                                            <PokemonCard data={project} key={project.id} />
+                                            <PokemonCard onChange={onChangeFav} data={project} key={project.id} />
                                         ))}
                                     </React.Fragment>
                                 ))}
