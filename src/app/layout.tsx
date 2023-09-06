@@ -3,6 +3,7 @@ import './globals.css'
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import { FavProvider } from '@/context/FavContext'
+import Navbar from './components/navbar/navbar'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -21,15 +22,7 @@ export default function RootLayout({
       <body className={`${inter.className}`}>
         <FavProvider>
           <Providers>
-            <div className="navbar bg-base-300">
-              <div className="navbar-start">
-              </div>
-              <div className="navbar-center">
-                <a href="/" className="btn btn-ghost normal-case text-xl">PokeWiki</a>
-              </div>
-              <div className="navbar-end">
-              </div>
-            </div>
+            <Navbar />
             {children}
           </Providers>
         </FavProvider>
