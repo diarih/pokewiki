@@ -5,19 +5,15 @@ interface PokemonAbility {
 }
 
 interface VersionGameIndex {
-    // Define the properties for VersionGameIndex
 }
 
 interface PokemonHeldItem {
-    // Define the properties for PokemonHeldItem
 }
 
 interface LocationAreaEncounters {
-    // Define the properties for LocationAreaEncounters
 }
 
 interface PokemonMove {
-    // Define the properties for PokemonMove
 }
 
 interface PokemonTypePast {
@@ -26,16 +22,17 @@ interface PokemonTypePast {
 }
 
 interface PokemonSprites {
-    // Define the properties for PokemonSprites
     other: any
 }
 
 interface NamedAPIResource {
-    // Define the properties for NamedAPIResource
 }
 
 interface PokemonStat {
-    // Define the properties for PokemonStat
+    stat: {
+        name: string
+    }
+    base_stat: string
 }
 
 interface PokemonType {
@@ -44,7 +41,6 @@ interface PokemonType {
 }
 
 interface PokemonSpecies {
-    // Define the properties for PokemonSpecies
 }
 
 interface Pokemon {

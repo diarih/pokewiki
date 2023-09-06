@@ -1,12 +1,15 @@
 'use client'
 
-import React, { useContext, useState } from 'react'
+import React, { ChangeEvent, useContext, useState } from 'react'
 import { useInfiniteQuery, useQuery } from 'react-query'
 import Loading from '@/app/loading'
 import { useInView } from 'react-intersection-observer'
 import PokemonCard from '../cards/PokemonCard'
 import { FavContext } from '@/context/FavContext'
 
+interface PokeType {
+    pokemon: []
+}
 
 async function getPokemons(pageparam: number = 0, queryKey: [string]) {
     const type = queryKey[0]
@@ -19,7 +22,7 @@ async function getPokemons(pageparam: number = 0, queryKey: [string]) {
     }
 
     const res = await fetch(`https://pokeapi.co/api/v2/type/${type}`)
-    const pokeType: any = await res.json();
+    const pokeType: PokeType = await res.json();
     const data = await getPokemon(pokeType.pokemon, type)
     return data
 
@@ -89,7 +92,7 @@ export default function List() {
         setType(e.target.value)
     }
 
-    const onChangeFav = (e: any) => {
+    const onChangeFav = (e: ChangeEvent<HTMLInputElement>) => {
         const updatedData = JSON.parse(e.target.value)
         addFav(updatedData)
     }
