@@ -31,7 +31,7 @@ export default async function asyPage({ params }: { params: { slug: string } }) 
     const imageAlt = data.sprites.other.dream_world.front_default
 
     return (
-        <main className="max-w-screen-md bg-neutral py-12 mx-auto flex flex-col gap-8 min-h-screen">
+        <>
             <section className="flex flex-col gap-2 justify-center items-center">
                 <div>#{data.id}</div>
                 <div className="capitalize font-semibold text-4xl">{data.name}</div>
@@ -93,6 +93,6 @@ export default async function asyPage({ params }: { params: { slug: string } }) 
 
                 </div>
             </section>
-        </main>
+        </>
     )
 }

@@ -104,7 +104,9 @@ export default function List() {
     return (
         <section className='flex md:px-8 justify-center flex-col items-center gap-4'>
             <div className='w-full flex items-center justify-between'>
-                <button className="btn btn-accent">My Favorite</button>
+                <a href="/favorite">
+                    <button className="btn btn-primary capitalize">My Pokemon</button>
+                </a>
                 <div className='flex items-center gap-3'>
                     <div className='whitespace-nowrap hidden md:block'>Monster Type</div>
                     <select onChange={onChangeType} defaultValue={type} className="select select-bordered w-full max-w-xs">
@@ -132,18 +134,18 @@ export default function List() {
                                 ))}
                             </div>
                             <div>
-                                    <button
-                                        ref={ref}
-                                        onClick={() => fetchNextPage()}
-                                        disabled={!hasNextPage || isFetchingNextPage}
-                                    >
-                                        {isFetchingNextPage
-                                            ? 'Loading more...'
-                                            : hasNextPage
-                                                ? 'Load Newer'
-                                                : 'Nothing more to load'}
-                                    </button>
-                                </div>
+                                <button
+                                    ref={ref}
+                                    onClick={() => fetchNextPage()}
+                                    disabled={!hasNextPage || isFetchingNextPage}
+                                >
+                                    {isFetchingNextPage
+                                        ? 'Loading more...'
+                                        : hasNextPage
+                                            ? 'Load Newer'
+                                            : 'Nothing more to load'}
+                                </button>
+                            </div>
                         </>
                     )
             }
